@@ -1,0 +1,10 @@
+package improbable.vehicle;
+
+component VehicleControl {
+  id = 1100;
+  
+  float speed = 1;
+  float desired_speed = 2;
+  float max_speed = 3;
+  float max_acceleration = 4;
+}
