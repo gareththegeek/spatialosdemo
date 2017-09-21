@@ -18,12 +18,29 @@ namespace Assets.Editor
 			var currentEntityId = 1;
 
 			snapshotEntities.Add(new EntityId(currentEntityId++), EntityTemplateFactory.CreatePlayerCreatorTemplate());
-			snapshotEntities.Add(new EntityId(currentEntityId++), EntityTemplateFactory.CreateCubeTemplate());
+            
+            AddVehicles(ref currentEntityId, snapshotEntities);
 
-			SaveSnapshot(snapshotEntities);
+            SaveSnapshot(snapshotEntities);
 		}
 
-		private static void SaveSnapshot(IDictionary<EntityId, Entity> snapshotEntities)
+        private static void AddVehicles(ref int currentEntityId, Dictionary<EntityId, Entity> snapshotEntities)
+        {
+            for (var i = 0; i < SimulationSettings.VehicleCount; i++)
+            {
+                var angle = 2 * Mathf.PI * i / SimulationSettings.VehicleCount;
+
+                var x = SimulationSettings.TrackRadius * Mathf.Cos(angle);
+                var y = SimulationSettings.TrackRadius * Mathf.Sin(angle);
+                var position = new Vector3(x, 0f, y);
+
+                var quaternion = Quaternion.AngleAxis(-angle * 180 / Mathf.PI, Vector3.up);
+                
+                snapshotEntities.Add(new EntityId(currentEntityId++), EntityTemplateFactory.CreateVehicleTemplate(position, quaternion));
+            }
+        }
+
+        private static void SaveSnapshot(IDictionary<EntityId, Entity> snapshotEntities)
 		{
 			File.Delete(SimulationSettings.DefaultSnapshotPath);
 			var maybeError = Snapshot.Save(SimulationSettings.DefaultSnapshotPath, snapshotEntities);

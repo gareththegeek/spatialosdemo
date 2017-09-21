@@ -53,5 +53,16 @@ namespace Assets.Gamelogic.EntityTemplates
 
             return cubeTemplate;
         }
+
+        public static Entity CreateVehicleTemplate(Vector3 position, Quaternion rotation)
+        {
+            return EntityBuilder.Begin()
+                .AddPositionComponent(position, CommonRequirementSets.PhysicsOnly)
+                .AddMetadataComponent(entityType: SimulationSettings.VehiclePrefabName)
+                .SetPersistence(true)
+                .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)
+                .AddComponent(new Rotation.Data(rotation.ToNativeQuaternion()), CommonRequirementSets.PhysicsOnly)
+                .Build();
+        }
     }
 }
