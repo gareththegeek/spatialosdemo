@@ -36,8 +36,11 @@ namespace Assets.Editor
                 var position = new Vector3(x, 0f, y);
 
                 var quaternion = Quaternion.AngleAxis(-angle * 180 / Mathf.PI, Vector3.up);
+
+                var maxSpeed = Random.Range(10f, 20f);
+                var maxAcceleration = Random.Range(0.2f, 0.5f);
                 
-                var data = new VehicleControlData(speed: 0f, desiredSpeed: 0f, maxSpeed: 10f, maxAcceleration: 0.1f);
+                var data = new VehicleControlData(speed: 0f, desiredSpeed: 0f, maxSpeed: maxSpeed, maxAcceleration: maxAcceleration);
                 
                 snapshotEntities.Add(new EntityId(currentEntityId++), EntityTemplateFactory.CreateVehicleTemplate(position, quaternion, data));
             }

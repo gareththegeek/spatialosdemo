@@ -3,6 +3,7 @@ using Improbable;
 using Improbable.Core;
 using Improbable.Unity.Visualizer;
 using Improbable.Vehicle;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Gamelogic.Vehicle
@@ -16,8 +17,11 @@ namespace Assets.Gamelogic.Vehicle
         private Rotation.Writer rotationWriter;
         [Require]
         private VehicleControl.Writer vehicleControlWriter;
-        
+
         private Rigidbody rigidBody;
+
+        [SerializeField]
+        private Sensor sensor;
 
         private void OnEnable()
         {
@@ -27,8 +31,9 @@ namespace Assets.Gamelogic.Vehicle
         private void FixedUpdate()
         {
             if (Time.time < 10f) return;
+            if (vehicleControlWriter == null) return;
 
-            var desired = vehicleControlWriter.Data.maxSpeed;
+            var desired = UpdateDesiredSpeed();
 
             var speed = UpdateSpeed(desired);
 
@@ -38,6 +43,51 @@ namespace Assets.Gamelogic.Vehicle
                     .SetSpeed(speed));
 
             UpdatePosition(speed);
+        }
+
+        private float UpdateDesiredSpeed()
+        {
+            var maxSpeed = vehicleControlWriter.Data.maxSpeed;
+
+            sensor.NearbyObjects = sensor.NearbyObjects
+                .Where(x => x != null)
+                .ToList();
+
+            if (!sensor.NearbyObjects.Any())
+            {
+                return maxSpeed;
+            }
+
+            var closest = GetClosest(sensor.NearbyObjects);
+            var distance = (closest.transform.position - transform.position).magnitude;
+
+            if (distance < 5f) return 0f;
+
+            var desiredSpeed = distance;
+
+            desiredSpeed = Mathf.Clamp(desiredSpeed, 0f, maxSpeed);
+
+            return desiredSpeed;
+        }
+
+        private Collider GetClosest(System.Collections.Generic.List<Collider> colliders)
+        {
+            Collider closest = null;
+            float closestDistance = float.MaxValue;
+            foreach (var collider in colliders)
+            {
+                if (collider == null) continue;
+                if (collider.transform == null || collider.transform.position == null) continue;
+
+                var distance = (collider.transform.position - transform.position).magnitude;
+
+                if (distance < closestDistance)
+                {
+                    closest = collider;
+                    closestDistance = distance;
+                }
+            }
+            return closest;
         }
 
         private float UpdateSpeed(float desired)

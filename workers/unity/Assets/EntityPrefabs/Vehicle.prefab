@@ -88,9 +88,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4421694841374196}
   - component: {fileID: 65125742976434376}
+  - component: {fileID: 114341523987896232}
   m_Layer: 0
   m_Name: Sensor
-  m_TagString: Untagged
+  m_TagString: Sensor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -281,6 +282,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 1.5, z: 5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114341523987896232
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1702902905252340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23da8ea7fd6de40429d2902b06fec300, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NearbyObjects: []
 --- !u!114 &114756983347216064
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -303,3 +316,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47f8c4056f23c6a4bacff1289630a644, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sensor: {fileID: 114341523987896232}
