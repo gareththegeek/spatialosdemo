@@ -2,6 +2,7 @@
 using Improbable;
 using Improbable.Core;
 using Improbable.Unity.Visualizer;
+using Improbable.Vehicle;
 using UnityEngine;
 
 namespace Assets.Gamelogic.Vehicle
@@ -13,6 +14,8 @@ namespace Assets.Gamelogic.Vehicle
         private Position.Writer positionWriter;
         [Require]
         private Rotation.Writer rotationWriter;
+        [Require]
+        private VehicleControl.Writer vehicleControlWriter;
         
         private Rigidbody rigidBody;
 
@@ -23,8 +26,40 @@ namespace Assets.Gamelogic.Vehicle
 
         private void FixedUpdate()
         {
-            const float speed = 10f;
+            if (Time.time < 10f) return;
+
+            var desired = vehicleControlWriter.Data.maxSpeed;
+
+            var speed = UpdateSpeed(desired);
+
+            vehicleControlWriter.Send(
+                new VehicleControl.Update()
+                    .SetDesiredSpeed(desired)
+                    .SetSpeed(speed));
+
             UpdatePosition(speed);
+        }
+
+        private float UpdateSpeed(float desired)
+        {
+            var data = vehicleControlWriter.Data;
+            var speed = data.speed;
+            var acceleration = data.maxAcceleration;
+            var maxSpeed = data.maxSpeed;
+
+            var delta = desired - speed;
+
+            if (delta >= 0f)
+            {
+                speed += Mathf.Min(acceleration, delta);
+            }
+            else if (delta < 0f)
+            {
+                speed += Mathf.Min(-acceleration, delta);
+            }
+            speed = Mathf.Clamp(speed, 0f, maxSpeed);
+
+            return speed;
         }
 
         private void UpdatePosition(float speed)
