@@ -7,6 +7,7 @@ using Improbable.Worker;
 using Quaternion = UnityEngine.Quaternion;
 using UnityEngine;
 using Improbable.Unity.Entity;
+using Improbable.Vehicle;
 
 namespace Assets.Gamelogic.EntityTemplates
 {
@@ -54,7 +55,7 @@ namespace Assets.Gamelogic.EntityTemplates
             return cubeTemplate;
         }
 
-        public static Entity CreateVehicleTemplate(Vector3 position, Quaternion rotation)
+        public static Entity CreateVehicleTemplate(Vector3 position, Quaternion rotation, VehicleControlData data)
         {
             return EntityBuilder.Begin()
                 .AddPositionComponent(position, CommonRequirementSets.PhysicsOnly)
@@ -62,6 +63,7 @@ namespace Assets.Gamelogic.EntityTemplates
                 .SetPersistence(true)
                 .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)
                 .AddComponent(new Rotation.Data(rotation.ToNativeQuaternion()), CommonRequirementSets.PhysicsOnly)
+                .AddComponent(new VehicleControl.Data(data), CommonRequirementSets.PhysicsOnly)
                 .Build();
         }
     }
