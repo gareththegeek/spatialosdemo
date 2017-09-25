@@ -23,6 +23,8 @@ namespace Assets.Gamelogic.Vehicle
         [SerializeField]
         private Sensor sensor;
 
+        private bool brakeDebounce;
+
         private void OnEnable()
         {
             rigidBody = GetComponent<Rigidbody>();
@@ -60,9 +62,7 @@ namespace Assets.Gamelogic.Vehicle
 
             var closest = GetClosest(sensor.NearbyObjects);
             var distance = (closest.transform.position - transform.position).magnitude;
-
-            if (distance < 5f) return 0f;
-
+            
             var desiredSpeed = distance;
 
             desiredSpeed = Mathf.Clamp(desiredSpeed, 0f, maxSpeed);
@@ -98,6 +98,23 @@ namespace Assets.Gamelogic.Vehicle
             var maxSpeed = data.maxSpeed;
 
             var delta = desired - speed;
+
+            if (speed != 0f && delta >= -0.2f)
+            {
+                if (brakeDebounce)
+                {
+                    brakeDebounce = false;
+                    vehicleControlWriter.Send(new VehicleControl.Update().AddBrake(new BrakeEvent(false)));
+                }
+            }
+            else
+            {
+                if (!brakeDebounce)
+                {
+                    brakeDebounce = true;
+                    vehicleControlWriter.Send(new VehicleControl.Update().AddBrake(new BrakeEvent(true)));
+                }
+            }
 
             if (delta >= 0f)
             {

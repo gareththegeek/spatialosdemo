@@ -1,5 +1,9 @@
 package improbable.vehicle;
 
+type BrakeEvent {
+	bool brake_on = 1;
+}
+
 component VehicleControl {
   id = 1100;
   
@@ -7,4 +11,6 @@ component VehicleControl {
   float desired_speed = 2;
   float max_speed = 3;
   float max_acceleration = 4;
+  
+  event BrakeEvent brake;
 }
