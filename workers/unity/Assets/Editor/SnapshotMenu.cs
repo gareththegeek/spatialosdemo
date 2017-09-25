@@ -37,8 +37,8 @@ namespace Assets.Editor
 
                 var quaternion = Quaternion.AngleAxis(-angle * 180 / Mathf.PI, Vector3.up);
 
-                var maxSpeed = Random.Range(10f, 20f);
-                var maxAcceleration = Random.Range(0.2f, 0.5f);
+                var maxSpeed = Random.Range(50f, 80f);
+                var maxAcceleration = Random.Range(0.3f, 0.6f);
                 
                 var data = new VehicleControlData(speed: 0f, desiredSpeed: 0f, maxSpeed: maxSpeed, maxAcceleration: maxAcceleration);
                 

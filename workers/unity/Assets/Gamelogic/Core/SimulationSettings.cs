@@ -18,7 +18,7 @@ namespace Assets.Gamelogic.Core
         public static readonly int FixedFramerate = 20;
 
         public static readonly float TrackRadius = 80f;
-        public static readonly int VehicleCount = 24;
+        public static readonly int VehicleCount = 16;
 
         public static readonly float PlayerCreatorQueryRetrySecs = 4;
         public static readonly float PlayerEntityCreationRetrySecs = 4;
