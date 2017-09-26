@@ -11,11 +11,15 @@ namespace Assets.Gamelogic.Vehicle
 
         private void OnEnable()
         {
+            if (vehicleControlReader == null) return;
+
             vehicleControlReader.BrakeTriggered.Add(OnBrake);
         }
 
         private void OnDisable()
         {
+            if (vehicleControlReader == null) return;
+
             vehicleControlReader.BrakeTriggered.Remove(OnBrake);
         }
 

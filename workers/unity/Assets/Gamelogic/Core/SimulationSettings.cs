@@ -8,6 +8,7 @@ namespace Assets.Gamelogic.Core
         public static readonly string PlayerCreatorPrefabName = "PlayerCreator";
         public static readonly string CubePrefabName = "Cube";
         public static readonly string VehiclePrefabName = "Vehicle";
+        public static readonly string TrafficLightPrefabName = "TrafficLight";
 
         public static readonly float HeartbeatCheckIntervalSecs = 3;
         public static readonly uint TotalHeartbeatsBeforeTimeout = 3;
@@ -17,12 +18,11 @@ namespace Assets.Gamelogic.Core
         public static readonly int TargetServerFramerate = 60;
         public static readonly int FixedFramerate = 20;
 
-        public static readonly float TrackRadius = 80f;
-        public static readonly int VehicleCount = 16;
-
         public static readonly float PlayerCreatorQueryRetrySecs = 4;
         public static readonly float PlayerEntityCreationRetrySecs = 4;
 
-        public static readonly string DefaultSnapshotPath = Application.dataPath + "/../../../snapshots/default.snapshot";
+        public static readonly float TrackRadius = 200f;
+
+        public static readonly string SnapshotPath = Application.dataPath + "/../../../snapshots/";
     }
 }

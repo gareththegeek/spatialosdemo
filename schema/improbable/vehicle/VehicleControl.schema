@@ -11,6 +11,16 @@ component VehicleControl {
   float desired_speed = 2;
   float max_speed = 3;
   float max_acceleration = 4;
+  float panic_distance = 6;
+  float response_scaling = 7;
   
   event BrakeEvent brake;
+  
+  float colour_red = 9;
+  float colour_green = 10;
+  float colour_blue = 11;
+  
+  int32 reaction_time = 12;
+  bytes reaction_buffer = 13;
+  int32 reaction_buffer_index = 14;
 }

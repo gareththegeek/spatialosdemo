@@ -1,64 +1,50 @@
 ﻿using Assets.Gamelogic.Core;
-using Assets.Gamelogic.EntityTemplates;
+using Assets.Snapshots;
+using Assets.Snapshots.Definitions;
 using Improbable;
-using Improbable.Vehicle;
 using Improbable.Worker;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Editor 
+namespace Assets.Editor
 {
-	public class SnapshotMenu : MonoBehaviour
-	{
-		[MenuItem("Improbable/Snapshots/Generate Default Snapshot")]
-		private static void GenerateDefaultSnapshot()
-		{
-			var snapshotEntities = new Dictionary<EntityId, Entity>();
-			var currentEntityId = 1;
-
-			snapshotEntities.Add(new EntityId(currentEntityId++), EntityTemplateFactory.CreatePlayerCreatorTemplate());
-            
-            AddVehicles(ref currentEntityId, snapshotEntities);
-
-            SaveSnapshot(snapshotEntities);
-		}
-
-        private static void AddVehicles(ref int currentEntityId, Dictionary<EntityId, Entity> snapshotEntities)
+    public class SnapshotMenu : MonoBehaviour
+    {
+        private static List<ISnapshot> snapshots = new List<ISnapshot>
         {
-            for (var i = 0; i < SimulationSettings.VehicleCount; i++)
+            new Default(),
+            new Heavy(),
+            new TrafficLight()
+        };
+
+        [MenuItem("Improbable/Snapshots/Generate Snapshots")]
+        private static void GenerateSnapshots()
+        {
+            var builder = new SnapshotBuilder();
+            foreach (var snapshot in snapshots)
             {
-                var angle = 2 * Mathf.PI * i / SimulationSettings.VehicleCount;
-
-                var x = SimulationSettings.TrackRadius * Mathf.Cos(angle);
-                var y = SimulationSettings.TrackRadius * Mathf.Sin(angle);
-                var position = new Vector3(x, 0f, y);
-
-                var quaternion = Quaternion.AngleAxis(-angle * 180 / Mathf.PI, Vector3.up);
-
-                var maxSpeed = Random.Range(50f, 80f);
-                var maxAcceleration = Random.Range(0.3f, 0.6f);
-                
-                var data = new VehicleControlData(speed: 0f, desiredSpeed: 0f, maxSpeed: maxSpeed, maxAcceleration: maxAcceleration);
-                
-                snapshotEntities.Add(new EntityId(currentEntityId++), EntityTemplateFactory.CreateVehicleTemplate(position, quaternion, data));
+                var entities = builder.Build(snapshot);
+                SaveSnapshot(entities, snapshot.Name);
             }
         }
 
-        private static void SaveSnapshot(IDictionary<EntityId, Entity> snapshotEntities)
-		{
-			File.Delete(SimulationSettings.DefaultSnapshotPath);
-			var maybeError = Snapshot.Save(SimulationSettings.DefaultSnapshotPath, snapshotEntities);
+        private static void SaveSnapshot(IDictionary<EntityId, Entity> snapshotEntities, string snapshotName)
+        {
+            var path = Path.Combine(SimulationSettings.SnapshotPath, snapshotName + ".snapshot");
+            Debug.LogWarning("Snapshot path: " + path);
+            File.Delete(path);
+            var maybeError = Improbable.Worker.Snapshot.Save(path, snapshotEntities);
 
-			if (maybeError.HasValue)
-			{
-				Debug.LogErrorFormat("Failed to generate initial world snapshot: {0}", maybeError.Value);
-			}
-			else
-			{
-				Debug.LogFormat("Successfully generated initial world snapshot at {0}", SimulationSettings.DefaultSnapshotPath);
-			}
-		}
-	}
+            if (maybeError.HasValue)
+            {
+                Debug.LogErrorFormat("Failed to generate initial world snapshot: {0}", maybeError.Value);
+            }
+            else
+            {
+                Debug.LogFormat("Successfully generated snapshot {0} at {1}", snapshotName, path);
+            }
+        }
+    }
 }

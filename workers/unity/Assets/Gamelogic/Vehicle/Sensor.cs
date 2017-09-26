@@ -7,39 +7,29 @@ namespace Assets.Gamelogic.Vehicle
     [RequireComponent(typeof(Collider))]
     public class Sensor : MonoBehaviour
     {
-        private new Collider collider;
-
-        public List<Collider> NearbyObjects = new List<Collider>();
-
+        public List<GameObject> NearbyObjects = new List<GameObject>();
+        
         private void OnEnable()
         {
-            collider = GetComponent<Collider>();
-
-            NearbyObjects.AddRange(
-                Physics
-                    .OverlapBox(collider.bounds.center, collider.bounds.extents / 2f)
-                    .Where(x => x.tag != "Sensor"));
+            NearbyObjects = new List<GameObject>();
         }
 
         private void OnDisable()
         {
-            NearbyObjects = new List<Collider>();
+            NearbyObjects = new List<GameObject>();
         }
 
-        private void OnTriggerEnter(Collider other)
+        private void FixedUpdate()
         {
-            if (NearbyObjects.Contains(other)) return;
-            if (other.tag == "Sensor") return;
-            if (!collider.bounds.Intersects(other.bounds)) return;
-
-            NearbyObjects.Add(other);
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            if (!NearbyObjects.Contains(other)) return;
-
-            NearbyObjects.Remove(other);
+            var thisId = gameObject.EntityId().Id;
+            var collider = GetComponent<BoxCollider>();
+            
+            NearbyObjects = Physics.OverlapBox(collider.transform.position + collider.center, collider.size / 2f, transform.rotation, -1, QueryTriggerInteraction.Ignore)
+                .Select(x => x.gameObject)
+                .Where(x => x.tag != "Sensor")
+                .Where(x => x.EntityId().Id != thisId)
+                .Where(x => x.gameObject.activeSelf)
+                .ToList();
         }
     }
 }
