@@ -8,6 +8,7 @@ using Quaternion = UnityEngine.Quaternion;
 using UnityEngine;
 using Improbable.Unity.Entity;
 using Improbable.Vehicle;
+using Improbable.Light;
 
 namespace Assets.Gamelogic.EntityTemplates
 {
@@ -55,7 +56,7 @@ namespace Assets.Gamelogic.EntityTemplates
             return cubeTemplate;
         }
 
-        public static Entity CreateVehicleTemplate(Vector3 position, Quaternion rotation, VehicleControlData data)
+        public static Entity CreateVehicleTemplate(Vector3 position, Quaternion rotation, VehicleControlData controlData, SensorData sensorData)
         {
             return EntityBuilder.Begin()
                 .AddPositionComponent(position, CommonRequirementSets.PhysicsOnly)
@@ -63,7 +64,20 @@ namespace Assets.Gamelogic.EntityTemplates
                 .SetPersistence(true)
                 .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)
                 .AddComponent(new Rotation.Data(rotation.ToNativeQuaternion()), CommonRequirementSets.PhysicsOnly)
-                .AddComponent(new VehicleControl.Data(data), CommonRequirementSets.PhysicsOnly)
+                .AddComponent(new VehicleControl.Data(controlData), CommonRequirementSets.PhysicsOnly)
+                .AddComponent(new Sensor.Data(sensorData), CommonRequirementSets.PhysicsOnly)
+                .Build();
+        }
+
+        public static Entity CreateTrafficLightTemplate(Vector3 position, Quaternion rotation, TrafficLightData data)
+        {
+            return EntityBuilder.Begin()
+                .AddPositionComponent(position, CommonRequirementSets.PhysicsOnly)
+                .AddMetadataComponent(entityType: SimulationSettings.TrafficLightPrefabName)
+                .SetPersistence(true)
+                .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)
+                .AddComponent(new Rotation.Data(rotation.ToNativeQuaternion()), CommonRequirementSets.PhysicsOnly)
+                .AddComponent(new TrafficLight.Data(data), CommonRequirementSets.PhysicsOnly)
                 .Build();
         }
     }

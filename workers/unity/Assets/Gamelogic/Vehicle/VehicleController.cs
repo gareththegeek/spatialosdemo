@@ -3,6 +3,7 @@ using Improbable;
 using Improbable.Core;
 using Improbable.Unity.Visualizer;
 using Improbable.Vehicle;
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -23,11 +24,15 @@ namespace Assets.Gamelogic.Vehicle
         [SerializeField]
         private Sensor sensor;
 
+        private float[] desiredSpeedBuffer;
+        private int desiredSpeedBufferIndex;
+
         private bool brakeDebounce;
 
         private void OnEnable()
         {
             rigidBody = GetComponent<Rigidbody>();
+            desiredSpeedBuffer = Deserialise(vehicleControlWriter.Data.reactionBuffer.BackingArray);
         }
 
         private void FixedUpdate()
@@ -47,43 +52,84 @@ namespace Assets.Gamelogic.Vehicle
             UpdatePosition(speed);
         }
 
+        private float[] Deserialise(byte[] bytes)
+        {
+            var result = new float[bytes.Length / sizeof(float)];
+            for (var i = 0; i < bytes.Length / sizeof(float); i++)
+            {
+                result[i] = BitConverter.ToSingle(bytes, i * sizeof(float));
+            }
+            return result;
+        }
+
+        private void Serialise(float[] floats, byte[] bytes)
+        {
+            for (var i = 0; i < floats.Length; i++)
+            {
+                var b = BitConverter.GetBytes(floats[i]);
+                Buffer.BlockCopy(b, 0, bytes, i * b.Length, b.Length);
+            }
+        }
+
+        private float SetDesiredSpeed(float newDesired)
+        {
+            var currentDesired = desiredSpeedBuffer[desiredSpeedBufferIndex];
+
+            desiredSpeedBuffer[desiredSpeedBufferIndex++] = newDesired;
+            desiredSpeedBufferIndex %= desiredSpeedBuffer.Length;
+
+            Serialise(desiredSpeedBuffer, vehicleControlWriter.Data.reactionBuffer.BackingArray);
+
+            vehicleControlWriter.Send(new VehicleControl.Update()
+                .SetSpeed(currentDesired)
+                .SetReactionBufferIndex(desiredSpeedBufferIndex)
+                .SetReactionBuffer(vehicleControlWriter.Data.reactionBuffer));
+
+            return currentDesired;
+
+            //vehicleControlWriter.Send(new VehicleControl.Update().SetSpeed(newDesired));
+            //return newDesired;
+        }
+
         private float UpdateDesiredSpeed()
         {
             var maxSpeed = vehicleControlWriter.Data.maxSpeed;
-
-            sensor.NearbyObjects = sensor.NearbyObjects
-                .Where(x => x != null)
-                .ToList();
-
+            
             if (!sensor.NearbyObjects.Any())
             {
-                return maxSpeed;
+                return SetDesiredSpeed(maxSpeed);
             }
 
             var closest = GetClosest(sensor.NearbyObjects);
-            var distance = (closest.transform.position - transform.position).magnitude;
             
-            var desiredSpeed = distance;
+            var distance = (closest.transform.position - transform.position).magnitude;
+
+            var desiredSpeed = distance / vehicleControlWriter.Data.responseScaling;
+
+            if (distance < vehicleControlWriter.Data.panicDistance)
+            {
+                return SetDesiredSpeed(0f);
+            }
 
             desiredSpeed = Mathf.Clamp(desiredSpeed, 0f, maxSpeed);
 
-            return desiredSpeed;
+            return SetDesiredSpeed(desiredSpeed);
         }
 
-        private Collider GetClosest(System.Collections.Generic.List<Collider> colliders)
+        private GameObject GetClosest(System.Collections.Generic.List<GameObject> objects)
         {
-            Collider closest = null;
+            GameObject closest = null;
             float closestDistance = float.MaxValue;
-            foreach (var collider in colliders)
+            foreach (var o in objects)
             {
-                if (collider == null) continue;
-                if (collider.transform == null || collider.transform.position == null) continue;
+                if (o == null) continue;
+                if (o.transform == null || o.transform.position == null) continue;
 
-                var distance = (collider.transform.position - transform.position).magnitude;
+                var distance = (o.transform.position - transform.position).magnitude;
 
                 if (distance < closestDistance)
                 {
-                    closest = collider;
+                    closest = o;
                     closestDistance = distance;
                 }
             }

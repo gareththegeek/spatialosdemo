@@ -1,0 +1,7 @@
+package improbable.vehicle;
+
+component Sensor {
+  id = 1102;
+  
+  float sensor_range = 5;
+}

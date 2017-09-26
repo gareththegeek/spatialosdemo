@@ -173,7 +173,7 @@ Camera:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingPath: -1
+  m_RenderingPath: 3
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
@@ -190,13 +190,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 152639683}
-  m_LocalRotation: {x: 0.30513346, y: -0.48890013, z: 0.15003774, w: 0.8033424}
-  m_LocalPosition: {x: 101.467, y: 55.079, z: -49.145}
+  m_LocalRotation: {x: 0.13528103, y: 0.8044116, z: -0.20056231, w: 0.5425826}
+  m_LocalPosition: {x: 151, y: 29, z: 34}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 39.566, y: -64.18201, z: -4.262}
+  m_LocalEulerAnglesHint: {x: 28, y: 112, z: 0}
 --- !u!1 &301990346
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,10 +293,9 @@ GameObject:
   m_Component:
   - component: {fileID: 351481143}
   - component: {fileID: 351481142}
-  - component: {fileID: 351481141}
   - component: {fileID: 351481140}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -334,20 +333,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &351481141
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 351481139}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Convex: 0
-  m_InflateMesh: 0
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!33 &351481142
 MeshFilter:
   m_ObjectHideFlags: 0

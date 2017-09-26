@@ -1,0 +1,20 @@
+package improbable.light;
+
+type LightEvent{}
+
+component TrafficLight {
+  id = 1101;
+  
+  event LightEvent red_on;
+  event LightEvent red_off;
+  event LightEvent amber_on;
+  event LightEvent amber_off;
+  event LightEvent green_on;
+  event LightEvent green_off;
+  
+  int32 state = 1;
+  float stop_duration = 2;
+  float ready_go_duration = 3;
+  float go_duration = 4;
+  float ready_stop_duration = 5;
+}
