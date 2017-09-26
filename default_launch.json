@@ -6,8 +6,8 @@
       "snapshotWritePeriodSeconds": 0
     },
     "dimensions": {
-      "xMeters": 1500,
-      "zMeters": 1500
+      "xMeters": 1000,
+      "zMeters": 1000
     }
   },
   "workers": [
@@ -15,7 +15,7 @@
       "worker_type": "UnityWorker",
       "load_balancing": {
         "auto_hex_grid": {
-          "num_workers": 1
+          "num_workers": 4
          }
       },
       "permissions": [{
