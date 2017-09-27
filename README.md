@@ -1,7 +1,7 @@
-# Starter Project
+# SpatialOS Demonstration
 ---
 
-*Copyright (C) 2017 Improbable Worlds Limited. All rights reserved.*
+Based upon the SpatialOS Start Project:
 
 - *GitHub repository*: [https://github.com/spatialos/StarterProject](https://github.com/spatialos/StarterProject)
 
@@ -9,15 +9,43 @@
 
 ## Introduction
 
-This is a SpatialOS starter project with useful core features that you can extend to build your own SpatialOS application.
+This is a simple project I built using Unity and SpatialOS for a presentation
 
-It contains:
+The project is an agent based simulation of vehicles traveling in a circle.  Each vehicle has a limited sensor range and attempts to avoid collisions with other vehicles by modifying its speed.  It is possible to specify multiple scenarios by implementing the ISnapshot interface.
 
-* A Player spawned on client connection as per the [Unity Client Lifecycle Guide](https://spatialos.improbable.io/docs/reference/latest/tutorials/unity-client-lifecycle).
-* A Cube spawned through a snapshot via an entity template method and an Unity prefab.
-* The rest of the features included in the [BlankProject](https://github.com/spatialos/BlankProject).
+The project contains a number of tags:
 
-If you run into problems, or want to give us feedback, please visit the [SpatialOS forums](https://forums.improbable.io/).
+## 1. Starting Point
+
+Pretty much the Starter Template with the addition of a simple Vehicle Prefab.
+
+## 2 Simple Positioning
+
+A simple VehicleController script causes all vehicles to travel at constant speed in a perfect circle.
+
+## 3 Basic Vehicle Control
+
+A VehicleControl component specifies the desired speed and maximum speed and acceleration of a vehicle.  Vehicles can only modify their speed by at most, their maximum acceleration value.
+
+## 4 Sensors and Random Properties
+
+Vehicles now have a sensor area and will only respond to vehicles within that area.  If no vehicles are sensed, the vehicle accelerates to maximum speed.  Otherwise the vehicle modifies its speed based upon the proximity of the nearest vehicle.  The snapshot now contains randomised maximum speed and acceleration values to make things interesting.
+
+## 5 Brake Event
+
+Add brake lights to the vehicle prefab and show brake likes using SpatialOS events when the vehicle is stationary or decelerating rapidly.
+
+## 6 Snapshots (and more)
+
+Allow multiple snapshots to be defined using the ISnapshot interface.  The way the vehicle responds to other vehicles is added to the VehicleControl component and can now be configured in snapshot.  Added a reaction time, vehicles' decisions are placed in a ring buffer introducing a delay between decision and action.
+
+Improved sensor logic to make it compatible with multiple workers
+
+Add a traffic light, just for fun.
+
+## 7 Multiple Workers and Cloud Deployment
+
+Update the default_launch.json to utilise four workers in a hex grid layout.
 
 ## Running the project
 
